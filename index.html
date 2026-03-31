@@ -1,0 +1,44 @@
+<div id="app">
+  <header>
+    <h1>Controle de Conta Corrente</h1>
+  </header>
+
+  <section class="formulario-transacao">
+    <h2>Nova Transação</h2>
+    <form>
+      <label for="descricao">Descrição:</label>
+      <input type="text" id="descricao" name="descricao" placeholder="Ex: Salário, Aluguel" required>
+
+      <label for="valor">Valor (R$):</label>
+      <input type="number" id="valor" name="valor" step="0.01" placeholder="Ex: 1500.00 ou -200.00" required>
+
+      <button type="submit">Registrar</button>
+    </form>
+  </section>
+
+  <hr>
+
+  <section class="lista-transacoes">
+    <h2>Extrato de Transações</h2>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Ordem</th>
+          <th>Descrição</th>
+          <th>Valor</th>
+          <th>Saldo Atual</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        </tbody>
+    </table>
+  </section>
+
+  <section class="paginacao">
+    <button>Anterior</button>
+    <span>Página 1</span>
+    <button>Próxima</button>
+  </section>
+</div>
