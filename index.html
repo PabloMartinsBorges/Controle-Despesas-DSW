@@ -32,7 +32,7 @@
         </tr>
       </thead>
       <tbody>
-        <transacao-item 
+        <tr is="vue:transacao-item"
           v-for="(t, index) in transacoesPaginadas" 
           :key="t.id"
           :transacao="t"
@@ -42,7 +42,7 @@
           :tamanho-pagina="transacoesPaginadas.length"
           @mover="moverTransacao"
           @remover="removerTransacao">
-        </transacao-item>
+        </tr>
       </tbody>
     </table>
   </section>
