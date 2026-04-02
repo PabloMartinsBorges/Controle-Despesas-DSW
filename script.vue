@@ -1,6 +1,35 @@
 // Importando as funções necessárias do Vue 3
 const { createApp, ref, computed } = Vue;
 
+
+const TransacaoItem = {
+  props: ['transacao', 'index', 'paginaAtual', 'totalPaginas', 'tamanhoPagina'],
+  template: `
+    <tr>
+      <td>
+        <button @click="$emit('mover', transacao.id, 'cima')" :disabled="paginaAtual === 1 && index === 0">up</button>
+        <button @click="$emit('mover', transacao.id, 'baixo')" :disabled="paginaAtual === totalPaginas && index === tamanhoPagina - 1">down</button>
+      </td>
+      
+      <td>{{ transacao.descricao }}</td>
+      
+      <td :class="{'credito': transacao.valor >= 0, 'debito': transacao.valor < 0}">
+        R$ {{ transacao.valor.toFixed(2) }}
+      </td>
+      
+      <td :class="{'saldo-negativo': transacao.saldo < 0}">
+        R$ {{ transacao.saldo.toFixed(2) }}
+      </td>
+      
+      <td>
+        <button @click="$emit('remover', transacao.id)">Remover</button>
+      </td>
+    </tr>
+  `
+};
+
+
+
 const app = createApp({
   setup() {
     const transacoes = ref([]); 
@@ -28,7 +57,23 @@ const app = createApp({
       novoValor.value = '';
       
     };
+    const paginaAnterior = () => {
+      if (paginaAtual.value > 1) paginaAtual.value--;
+    };
 
+    const proximaPagina = () => {
+      if (paginaAtual.value < totalPaginas.value) paginaAtual.value++;
+    };
+
+    return {
+      novaDescricao,
+      novoValor,
+      paginaAtual,
+      totalPaginas,
+      adicionarTransacao,
+      paginaAnterior,
+      proximaPagina
+    };
 
 
   }
