@@ -5,12 +5,12 @@
 
   <section class="formulario-transacao">
     <h2>Nova Transação</h2>
-    <form>
+    <form @submit.prevent="adicionarTransacao">
       <label for="descricao">Descrição:</label>
-      <input type="text" id="descricao" name="descricao" placeholder="Ex: Salário, Aluguel" required>
+      <input type="text" id="descricao" v-model="novaDescricao" placeholder="Ex: Salário" required>
 
       <label for="valor">Valor (R$):</label>
-      <input type="number" id="valor" name="valor" step="0.01" placeholder="Ex: 1500.00 ou -200.00" required>
+      <input type="number" id="valor" v-model.number="novoValor" step="0.01" placeholder="Ex: 1500 ou -200" required>
 
       <button type="submit">Registrar</button>
     </form>
@@ -32,13 +32,24 @@
         </tr>
       </thead>
       <tbody>
-        </tbody>
+        <transacao-item 
+          v-for="(t, index) in transacoesPaginadas" 
+          :key="t.id"
+          :transacao="t"
+          :index="index"
+          :pagina-atual="paginaAtual"
+          :total-paginas="totalPaginas"
+          :tamanho-pagina="transacoesPaginadas.length"
+          @mover="moverTransacao"
+          @remover="removerTransacao">
+        </transacao-item>
+      </tbody>
     </table>
   </section>
 
-  <section class="paginacao">
-    <button>Anterior</button>
-    <span>Página 1</span>
-    <button>Próxima</button>
+  <section class="paginacao" v-if="totalPaginas > 0">
+    <button @click="paginaAnterior" :disabled="paginaAtual === 1">Anterior</button>
+    <span>Página {{ paginaAtual }} de {{ totalPaginas }}</span>
+    <button @click="proximaPagina" :disabled="paginaAtual === totalPaginas">Próxima</button>
   </section>
 </div>
