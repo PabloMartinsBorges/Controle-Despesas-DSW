@@ -1,7 +1,6 @@
-// Importando as funções necessárias do Vue 3
 const { createApp, ref, computed } = Vue;
 
-
+ 
 const TransacaoItem = {
   props: ['transacao', 'index', 'paginaAtual', 'totalPaginas', 'tamanhoPagina'],
   template: `
@@ -29,7 +28,6 @@ const TransacaoItem = {
 };
 
 
-
 const app = createApp({
   setup() {
     const transacoes = ref([]); 
@@ -37,17 +35,31 @@ const app = createApp({
     const novoValor = ref('');
     
     const paginaAtual = ref(1);
-    const itensPorPagina = 5;
+    const itensPorPagina = 5; 
 
+    const transacoesComSaldo = computed(() => {
+      let saldoAcumulado = 0;
+      return transacoes.value.map(transacao => {
+        saldoAcumulado += transacao.valor;
+        return { ...transacao, saldo: saldoAcumulado };
+      });
+    });
+
+    const transacoesPaginadas = computed(() => {
+      const inicio = (paginaAtual.value - 1) * itensPorPagina;
+      const fim = inicio + itensPorPagina;
+      return transacoesComSaldo.value.slice(inicio, fim);
+    });
 
     const totalPaginas = computed(() => {
-      return Math.ceil(transacoes.value.length / itensPorPagina);
+      return Math.ceil(transacoes.value.length / itensPorPagina) || 1;
     });
 
     const adicionarTransacao = () => {
-      if (!novaDescricao.value || !novoValor.value) return;
+      if (!novaDescricao.value || novoValor.value === '') return;
 
       transacoes.value.push({
+        id: Date.now(),
         descricao: novaDescricao.value,
         valor: parseFloat(novoValor.value)
       });
@@ -55,8 +67,16 @@ const app = createApp({
       // Limpa o formulário após adicionar
       novaDescricao.value = '';
       novoValor.value = '';
-      
     };
+
+    const removerTransacao = (id) => {
+      transacoes.value = transacoes.value.filter(t => t.id !== id);
+      if (paginaAtual.value > totalPaginas.value && totalPaginas.value > 0) {
+        paginaAtual.value = totalPaginas.value;
+      }
+    };
+
+
     const paginaAnterior = () => {
       if (paginaAtual.value > 1) paginaAtual.value--;
     };
@@ -68,14 +88,15 @@ const app = createApp({
     return {
       novaDescricao,
       novoValor,
+      transacoesPaginadas,
       paginaAtual,
       totalPaginas,
       adicionarTransacao,
+      removerTransacao,
       paginaAnterior,
       proximaPagina
     };
-
-
   }
-  
-}).mount('#app'); // Monta a aplicação na div principal
+});
+
+app.mount('#app'); // Monta a aplicação na div principal
