@@ -1,7 +1,8 @@
 const { createApp, ref, computed } = Vue;
 
- 
+// COMPONENTE: Representa uma linha da tabela de transações 
 const TransacaoItem = {
+  // São os dados que o componente recebe da tabela principal
   props: ['transacao', 'index', 'paginaAtual', 'totalPaginas', 'tamanhoPagina'],
   template: `
     <tr>
@@ -27,16 +28,19 @@ const TransacaoItem = {
   `
 };
 
-
+// app
 const app = createApp({
   setup() {
+    // ref() cria variáveis reativas
     const transacoes = ref([]); 
     const novaDescricao = ref(''); 
     const novoValor = ref('');
     
     const paginaAtual = ref(1);
-    const itensPorPagina = 5; 
+    const itensPorPagina = 5;
 
+
+    // computed() cria variáveis derivadas
     const transacoesComSaldo = computed(() => {
       let saldoAcumulado = 0;
       return transacoes.value.map(transacao => {
@@ -64,9 +68,10 @@ const app = createApp({
         valor: parseFloat(novoValor.value)
       });
 
-      // Limpa o formulário após adicionar
+      // Limpa o formulário após adicionar a transação e vai para a última página
       novaDescricao.value = '';
       novoValor.value = '';
+      paginaAtual.value = totalPaginas.value;
     };
 
     const removerTransacao = (id) => {
@@ -76,6 +81,21 @@ const app = createApp({
       }
     };
 
+    // Altera a posição do item no array original
+    const moverTransacao = (id, direcao) => {
+      // Encontra a transação na lista
+      const index = transacoes.value.findIndex(t => t.id === id);
+      
+      if (direcao === 'cima' && index > 0) {
+        const temp = transacoes.value[index];
+        transacoes.value[index] = transacoes.value[index - 1];
+        transacoes.value[index - 1] = temp;
+      } else if (direcao === 'baixo' && index < transacoes.value.length - 1) {
+        const temp = transacoes.value[index];
+        transacoes.value[index] = transacoes.value[index + 1];
+        transacoes.value[index + 1] = temp;
+      }
+    };
 
     const paginaAnterior = () => {
       if (paginaAtual.value > 1) paginaAtual.value--;
@@ -93,10 +113,13 @@ const app = createApp({
       totalPaginas,
       adicionarTransacao,
       removerTransacao,
+      moverTransacao,
       paginaAnterior,
       proximaPagina
     };
   }
 });
 
+// Registra o componente 'TransacaoItem' para que o HTML o reconheça
+app.component('transacao-item', TransacaoItem);
 app.mount('#app'); // Monta a aplicação na div principal

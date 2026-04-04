@@ -5,6 +5,7 @@
 
   <section class="formulario-transacao">
     <h2>Nova Transação</h2>
+    <!-- é um atalho do Vue para impedir a recarga da página ao enviar o formulário -->
     <form @submit.prevent="adicionarTransacao">
       <label for="descricao">Descrição:</label>
       <input type="text" id="descricao" v-model="novaDescricao" placeholder="Ex: Salário" required>
@@ -32,6 +33,7 @@
         </tr>
       </thead>
       <tbody>
+        <!-- ":" é um atalho do Vue para o v-bind -->
         <tr is="vue:transacao-item"
           v-for="(t, index) in transacoesPaginadas" 
           :key="t.id"
